@@ -3,7 +3,7 @@ import os
 
 app = Flask(__name__)
 
-@approute('/')
+@app.route('/')
 def home():
     return {
         "status": "online",
