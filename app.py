@@ -7,7 +7,7 @@ app = Flask(__name__)
 def home():
     return {
         "status": "online",
-        "marca" : "GuIIoTiT",
+        "marca" : "GuIIoTTI",
         "mensagem" : "Hospedado com sucesso"
     }
 if __name__ == '__main__':
