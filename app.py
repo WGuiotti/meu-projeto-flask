@@ -1,15 +1,12 @@
-from flask import Flask
+from flask import Flask, render_template
 import os   
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return {
-        "status": "online",
-        "marca" : "GuIIoTTI",
-        "mensagem" : "Hospedado com sucesso"
-    }
+    return render_template('index.html')
+
 if __name__ == '__main__':
     # Garante que o app use a porta do servidor (Render) ou a 5000 localmente
     port = int(os.environ.get("PORT", 5000))
