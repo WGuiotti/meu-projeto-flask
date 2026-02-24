@@ -7,7 +7,7 @@
     <!-- Viewport settings for responsive design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Page title -->
-    <title>GuIIOTTI - IIoT & Automation Solutions</title>
+    <title>{{ text.title }}</title>
     <!-- Link to external CSS stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -18,10 +18,17 @@
         <div class="container">
             <nav>
                 <!-- Brand logo with colored spans -->
-                <a href="{{ url_for('index') }}" class="brand-logo">
+                <a href="{{ url_for('index', lang=lang) }}" class="brand-logo">
                     <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="GuIIOTTI Brand" class="logo-img">
                 </a>
-                <a href="{{ url_for('about') }}" class="btn" style="background: transparent; border: 1px solid var(--iiot-color); color: var(--iiot-color);">About Us</a>
+                <div class="nav-actions">
+                    <a href="{{ url_for('about', lang=lang) }}" class="btn" style="background: transparent; border: 1px solid var(--iiot-color); color: var(--iiot-color);">{{ text.btn_about }}</a>
+                    <div class="lang-flags">
+                        <a href="{{ url_for('index', lang='pt') }}" title="Português">🇧🇷</a>
+                        <a href="{{ url_for('index', lang='en') }}" title="English">🇬🇧</a>
+                        <a href="{{ url_for('index', lang='es') }}" title="Español">🇪🇸</a>
+                    </div>
+                </div>
             </nav>
         </div>
     </header>
@@ -29,31 +36,31 @@
     <!-- Hero section with main headline and call to action -->
     <section class="hero">
         <div class="container">
-            <h1>Innovating the Future</h1>
-            <p>Connecting Homes, Buildings, and Industries through advanced IIoT, Automation, and Electrical Engineering.</p>
-            <a href="#services" class="btn">Our Services</a>
+            <h1>{{ text.hero_h1 }}</h1>
+            <p>{{ text.hero_p }}</p>
+            <a href="#services" class="btn">{{ text.btn_services }}</a>
         </div>
     </section>
 
     <!-- Services section listing offerings -->
     <section id="services" class="services">
         <div class="container">
-            <h2 class="section-title">What We Do</h2>
+            <h2 class="section-title">{{ text.section_services }}</h2>
             <div class="grid">
                 <!-- Service Card 1 -->
                 <div class="card">
-                    <h3>IIoT Solutions</h3>
-                    <p>Transforming industries with data-driven insights. We implement Industrial Internet of Things strategies to monitor, analyze, and optimize operations in real-time.</p>
+                    <h3>{{ text.card1_title }}</h3>
+                    <p>{{ text.card1_p }}</p>
                 </div>
                 <!-- Service Card 2 -->
                 <div class="card">
-                    <h3>IoT Automation</h3>
-                    <p>Smart living and working environments. From intelligent home control to complex building management systems, we bring automation to life.</p>
+                    <h3>{{ text.card2_title }}</h3>
+                    <p>{{ text.card2_p }}</p>
                 </div>
                 <!-- Service Card 3 -->
                 <div class="card">
-                    <h3>Electrical Services</h3>
-                    <p>Reliable power infrastructure. We provide high-quality electrical installation, maintenance, and consulting for residential and industrial projects.</p>
+                    <h3>{{ text.card3_title }}</h3>
+                    <p>{{ text.card3_p }}</p>
                 </div>
             </div>
         </div>
@@ -62,11 +69,11 @@
     <!-- Sectors section displaying tags -->
     <section class="sectors">
         <div class="container">
-            <h2 class="section-title">Sectors We Serve</h2>
+            <h2 class="section-title">{{ text.section_sectors }}</h2>
             <div class="sector-tags">
-                <div class="tag">Smart Homes</div>
-                <div class="tag">Commercial Buildings</div>
-                <div class="tag">Modern Industries</div>
+                <div class="tag">{{ text.tag1 }}</div>
+                <div class="tag">{{ text.tag2 }}</div>
+                <div class="tag">{{ text.tag3 }}</div>
             </div>
         </div>
     </section>
@@ -74,7 +81,7 @@
     <!-- Footer section -->
     <footer>
         <div class="container">
-            <p>&copy; 2024 GuIIOTTI. All rights reserved.</p>
+            <p>{{ text.footer }}</p>
         </div>
     </footer>
 

@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - GuIIOTTI</title>
+    <title>{{ text.btn_about }} - GuIIOTTI</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <header>
         <div class="container">
             <nav>
-                <a href="{{ url_for('index') }}" class="brand-logo">
+                <a href="{{ url_for('index', lang=lang) }}" class="brand-logo">
                     <span class="brand-gu">Gu</span><span class="brand-iiot">IIOT</span><span class="brand-ti">TI</span>
                 </a>
             </nav>
@@ -18,9 +18,9 @@
     </header>
 
     <section class="container" style="padding: 100px 20px;">
-        <h1 class="section-title">About Our Mission</h1>
+        <h1 class="section-title">{{ text.about_title }}</h1>
         <p style="text-align: center; max-width: 800px; margin: 0 auto;">
-            We are dedicated to bridging the gap between traditional electrical engineering and modern IoT solutions.
+            {{ text.about_p }}
         </p>
     </section>
 
