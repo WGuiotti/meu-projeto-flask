@@ -1,5 +1,5 @@
 # Import necessary modules from Flask
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import os
 
 # Initialize the Flask application
@@ -18,6 +18,8 @@ translations = {
         'garage_h2': 'Garagem Inteligente',
         'garage_p': 'Nunca mais esqueça seu portão aberto além de ganhar tempo no seu dia a dia!',
         'garage_alt': 'Controle de portão de garagem inteligente via aplicativo',
+        'garage_link': 'Conheça a Garagem Inteligente',
+        'garage_seo': 'Especialistas em TX Car: A maneira mais prática de abrir o portão com farol alto. Segurança total ao chegar.',
         'btn_services': 'Nossos Serviços',
         'section_services': 'O Que Fazemos',
         'card1_title': 'Soluções IIoT',
@@ -32,7 +34,15 @@ translations = {
         'tag3': 'Indústrias Modernas',
         'footer': '© 2024 GuIIOTTI. Todos os direitos reservados.',
         'about_title': 'Sobre Nossa Missão',
-        'about_p': 'Dedicamo-nos a preencher a lacuna entre a engenharia elétrica tradicional e as modernas soluções de IoT.'
+        'about_p': 'Dedicamo-nos a preencher a lacuna entre a engenharia elétrica tradicional e as modernas soluções de IoT.',
+        'contact_title': 'Fale Conosco',
+        'contact_whatsapp': 'Conversar no WhatsApp',
+        'contact_email': 'wellington.guiotti@gmail.com',
+        'contact_phone_display': '+55 19 99400-7855',
+        'whatsapp_msg': 'Olá! Estou entrando em contato através do website GuIIOTTI.',
+        'iiot_detail': 'Nossas soluções de IIoT conectam máquinas, sensores e sistemas para fornecer visibilidade total da sua produção. Utilizamos protocolos avançados como MQTT e OPC-UA para garantir integridade de dados e dashboards em tempo real.',
+        'auto_detail': 'Desenvolvemos sistemas de automação que aprendem com o comportamento do usuário. Seja para reduzir o consumo de energia em edifícios comerciais ou para aumentar o conforto residencial, nossa tecnologia trabalha por você.',
+        'elec_detail': 'A base de qualquer sistema inteligente é uma rede elétrica robusta. Oferecemos projetos elétricos, laudos técnicos, manutenção preventiva e adequação às normas NR-10, garantindo segurança e eficiência.'
     },
     'en': {
         'title': 'GuIIOTTI - IIoT & Automation Solutions',
@@ -42,6 +52,8 @@ translations = {
         'garage_h2': 'Smart Garage',
         'garage_p': 'Never forget your gate open again and save time in your daily life!',
         'garage_alt': 'Smart garage gate control via app',
+        'garage_link': 'See Smart Garage',
+        'garage_seo': 'TX Car Specialists: The most practical way to open the gate with high beams. Total safety upon arrival.',
         'btn_services': 'Our Services',
         'section_services': 'What We Do',
         'card1_title': 'IIoT Solutions',
@@ -56,7 +68,15 @@ translations = {
         'tag3': 'Modern Industries',
         'footer': '© 2024 GuIIOTTI. All rights reserved.',
         'about_title': 'About Our Mission',
-        'about_p': 'We are dedicated to bridging the gap between traditional electrical engineering and modern IoT solutions.'
+        'about_p': 'We are dedicated to bridging the gap between traditional electrical engineering and modern IoT solutions.',
+        'contact_title': 'Contact Us',
+        'contact_whatsapp': 'Chat on WhatsApp',
+        'contact_email': 'wellington.guiotti@gmail.com',
+        'contact_phone_display': '+55 19 99400-7855',
+        'whatsapp_msg': 'Hello! I am contacting you through the GuIIOTTI website.',
+        'iiot_detail': 'Our IIoT solutions connect machines, sensors, and systems to provide full visibility of your production. We use advanced protocols like MQTT and OPC-UA to ensure data integrity and real-time dashboards.',
+        'auto_detail': 'We develop automation systems that learn from user behavior. Whether reducing energy consumption in commercial buildings or increasing residential comfort, our technology works for you.',
+        'elec_detail': 'The foundation of any smart system is a robust electrical network. We offer electrical designs, technical reports, preventive maintenance, and compliance with safety standards, ensuring security and efficiency.'
     },
     'es': {
         'title': 'GuIIOTTI - Soluciones IIoT y Automatización',
@@ -66,6 +86,8 @@ translations = {
         'garage_h2': 'Garaje Inteligente',
         'garage_p': '¡Nunca más olvides tu portón abierto y ahorra tiempo en tu día a día!',
         'garage_alt': 'Control de portón de garaje inteligente vía app',
+        'garage_link': 'Ver Garaje Inteligente',
+        'garage_seo': 'Especialistas en TX Car: La forma más práctica de abrir el portón con luz alta. Seguridad total al llegar.',
         'btn_services': 'Nuestros Servicios',
         'section_services': 'Lo Que Hacemos',
         'card1_title': 'Soluciones IIoT',
@@ -80,7 +102,15 @@ translations = {
         'tag3': 'Industrias Modernas',
         'footer': '© 2024 GuIIOTTI. Todos los derechos reservados.',
         'about_title': 'Sobre Nuestra Misión',
-        'about_p': 'Nos dedicamos a cerrar la brecha entre la ingeniería eléctrica tradicional y las soluciones modernas de IoT.'
+        'about_p': 'Nos dedicamos a cerrar la brecha entre la ingeniería eléctrica tradicional y las soluciones modernas de IoT.',
+        'contact_title': 'Contáctenos',
+        'contact_whatsapp': 'Hable por WhatsApp',
+        'contact_email': 'wellington.guiotti@gmail.com',
+        'contact_phone_display': '+55 19 99400-7855',
+        'whatsapp_msg': '¡Hola! Me pongo en contacto a través del sitio web de GuIIOTTI.',
+        'iiot_detail': 'Nuestras soluciones IIoT conectan máquinas, sensores y sistemas para brindar visibilidad total de su producción. Utilizamos protocolos avanzados como MQTT y OPC-UA para garantizar la integridad de los datos y paneles en tiempo real.',
+        'auto_detail': 'Desarrollamos sistemas de automatización que aprenden del comportamiento del usuario. Ya sea para reducir el consumo de energía en edificios comerciales o aumentar el confort residencial, nuestra tecnología trabaja para usted.',
+        'elec_detail': 'La base de cualquier sistema inteligente es una red eléctrica robusta. Ofrecemos diseños eléctricos, informes técnicos, mantenimiento preventivo y cumplimiento de normas de seguridad, garantizando seguridad y eficiencia.'
     }
 }
 
@@ -101,6 +131,32 @@ def about():
     if lang not in translations:
         lang = 'pt'
     return render_template('pages/about.html', text=translations[lang], lang=lang)
+
+# Route for Services Pages
+@app.route('/service/<service_id>')
+def service(service_id):
+    lang = request.args.get('lang', 'pt')
+    if lang not in translations:
+        lang = 'pt'
+    
+    # Map service_id to translation keys
+    service_map = {
+        'iiot': {'title': 'card1_title', 'desc': 'card1_p', 'detail': 'iiot_detail'},
+        'automation': {'title': 'card2_title', 'desc': 'card2_p', 'detail': 'auto_detail'},
+        'electrical': {'title': 'card3_title', 'desc': 'card3_p', 'detail': 'elec_detail'}
+    }
+    
+    if service_id not in service_map:
+        return render_template('index.html', text=translations[lang], lang=lang) # Fallback
+        
+    data = service_map[service_id]
+    return render_template('pages/service.html', text=translations[lang], lang=lang, service_data=data)
+
+# SEO Routes for Garage/TX Car
+@app.route('/txcar')
+@app.route('/farol-alto')
+def garage_redirect():
+    return redirect(url_for('index', _anchor='garage'))
 
 # Run the application if executed as the main script
 if __name__ == '__main__':

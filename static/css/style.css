@@ -151,6 +151,14 @@ nav {
     line-height: 1.4;
 }
 
+/* SEO Text Style */
+.garage-seo {
+    font-size: 1.1rem;
+    color: var(--iiot-color);
+    margin-top: 15px;
+    font-weight: 600;
+}
+
 /* Animation for CX - Draws attention to the value proposition */
 .animated-cta {
     animation: pulse 3s infinite;
@@ -197,6 +205,19 @@ nav {
     overflow: hidden;
 }
 
+/* Card Title Link Styles */
+.card-link-title {
+    text-decoration: none;
+    display: block;
+}
+
+/* Highlight Link inside text */
+.text-link-highlight {
+    color: var(--iiot-color);
+    text-decoration: none;
+    font-weight: bold;
+}
+
 .card:hover { transform: translateY(-10px); border-color: var(--iiot-color); }
 .card h3 { font-size: 1.5rem; margin-bottom: 15px; color: var(--iiot-color); }
 .card p { color: #94a3b8; }
@@ -223,6 +244,58 @@ nav {
     color: var(--primary-color);
     font-weight: 600;
     font-size: 1.1rem;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.tag:hover {
+    background-color: rgba(59, 130, 246, 0.2);
+}
+
+/* Contact Section Styles */
+.contact-section {
+    padding: 80px 0;
+    background-color: var(--card-bg);
+    border-top: 1px solid #334155;
+    text-align: center;
+}
+
+.contact-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.btn-contact {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 35px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: transform 0.3s, box-shadow 0.3s;
+    color: white;
+}
+
+.btn-contact.whatsapp {
+    background-color: #25D366;
+}
+
+.btn-contact.phone {
+    background-color: var(--iiot-color);
+    color: #022c22; /* Dark text for contrast */
+}
+
+.btn-contact.email {
+    background-color: var(--primary-color);
+}
+
+.btn-contact:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
 
 footer { text-align: center; padding: 40px 0; color: #64748b; margin-top: 50px; font-size: 0.9rem; }

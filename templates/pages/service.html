@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ text[service_data.title] }} - GuIIOTTI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="{{ url_for('index', lang=lang) }}" class="brand-logo">
+                    <span class="brand-gu">Gu</span><span class="brand-iiot">IIOT</span><span class="brand-ti">TI</span>
+                </a>
+                <a href="{{ url_for('index', lang=lang) }}#services" class="btn" style="background: transparent; border: 1px solid var(--iiot-color); color: var(--iiot-color);">Voltar</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" style="min-height: 60vh;">
+        <div class="container">
+            <h1>{{ text[service_data.title] }}</h1>
+            <p>{{ text[service_data.desc] }}</p>
+        </div>
+    </section>
+
+    <section class="container" style="padding: 80px 20px; text-align: center;">
+        <p style="font-size: 1.2rem; max-width: 800px; margin: 0 auto; color: var(--text-color);">{{ text[service_data.detail] }}</p>
+    </section>
+
+</body>
+</html>
