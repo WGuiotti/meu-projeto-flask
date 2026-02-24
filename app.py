@@ -1,14 +1,25 @@
+# Import necessary modules from Flask
 from flask import Flask, render_template
-import os   
+import os
 
+# Initialize the Flask application
 app = Flask(__name__)
 
+# Professional Configuration: Define path to database
+app.config['DATABASE'] = os.path.join(app.root_path, 'database', 'site.db')
+
+# Define the route for the root URL ('/')
 @app.route('/')
-def home():
+def index():
+    # Render the index.html template
     return render_template('index.html')
 
+# Example route for a sub-page in the 'pages' folder
+@app.route('/about')
+def about():
+    return render_template('pages/about.html')
+
+# Run the application if executed as the main script
 if __name__ == '__main__':
-    # Garante que o app use a porta do servidor (Render) ou a 5000 localmente
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
-    
+    # Run in debug mode for development
+    app.run(debug=True)

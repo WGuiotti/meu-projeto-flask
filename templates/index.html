@@ -1,198 +1,32 @@
+<!-- Document type declaration -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Character encoding -->
     <meta charset="UTF-8">
+    <!-- Viewport settings for responsive design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Page title -->
     <title>GuIIOTTI - IIoT & Automation Solutions</title>
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --text-color: #e2e8f0;
-            --primary-color: #3b82f6;
-            --iiot-color: #22d3ee;    /* Cyan for IIOT */
-            --ti-color: #f472b6;      /* Pink/Magenta for TI */
-            --card-bg: #1e293b;
-            --accent: #64748b;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        header {
-            background-color: rgba(15, 23, 42, 0.95);
-            padding: 20px 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid #334155;
-            backdrop-filter: blur(10px);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand-logo {
-            font-size: 2.5rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-decoration: none;
-            color: white;
-        }
-
-        .brand-gu { color: white; }
-        .brand-iiot { color: var(--iiot-color); text-shadow: 0 0 10px rgba(34, 211, 238, 0.3); }
-        .brand-ti { color: var(--ti-color); text-shadow: 0 0 10px rgba(244, 114, 182, 0.3); }
-
-        .hero {
-            text-align: center;
-            padding: 120px 20px;
-            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            font-size: 1.25rem;
-            color: var(--accent);
-            max-width: 700px;
-            margin: 0 auto 40px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 35px;
-            background-color: var(--iiot-color);
-            color: #0f172a;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
-            background-color: #fff;
-        }
-
-        .services {
-            padding: 100px 0;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 60px;
-            color: white;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            padding: 40px;
-            border-radius: 20px;
-            transition: transform 0.3s, border-color 0.3s;
-            border: 1px solid #334155;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            border-color: var(--iiot-color);
-        }
-
-        .card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: var(--iiot-color);
-        }
-
-        .card p {
-            color: #94a3b8;
-        }
-
-        .sectors {
-            background-color: #1e293b;
-            padding: 80px 0;
-            text-align: center;
-            border-top: 1px solid #334155;
-            border-bottom: 1px solid #334155;
-        }
-
-        .sector-tags {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 30px;
-        }
-
-        .tag {
-            background-color: rgba(244, 114, 182, 0.1);
-            padding: 10px 30px;
-            border-radius: 50px;
-            border: 1px solid var(--ti-color);
-            color: var(--ti-color);
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        footer {
-            text-align: center;
-            padding: 40px 0;
-            color: #64748b;
-            margin-top: 50px;
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
-            .brand-logo { font-size: 1.8rem; }
-        }
-    </style>
+    <!-- Link to external CSS stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
+    <!-- Header section with navigation -->
     <header>
         <div class="container">
             <nav>
-                <a href="#" class="brand-logo">
-                    <span class="brand-gu">Gu</span><span class="brand-iiot">IIOT</span><span class="brand-ti">TI</span>
+                <!-- Brand logo with colored spans -->
+                <a href="{{ url_for('index') }}" class="brand-logo">
+                    <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="GuIIOTTI Brand" class="logo-img">
                 </a>
+                <a href="{{ url_for('about') }}" class="btn" style="background: transparent; border: 1px solid var(--iiot-color); color: var(--iiot-color);">About Us</a>
             </nav>
         </div>
     </header>
 
+    <!-- Hero section with main headline and call to action -->
     <section class="hero">
         <div class="container">
             <h1>Innovating the Future</h1>
@@ -201,18 +35,22 @@
         </div>
     </section>
 
+    <!-- Services section listing offerings -->
     <section id="services" class="services">
         <div class="container">
             <h2 class="section-title">What We Do</h2>
             <div class="grid">
+                <!-- Service Card 1 -->
                 <div class="card">
                     <h3>IIoT Solutions</h3>
                     <p>Transforming industries with data-driven insights. We implement Industrial Internet of Things strategies to monitor, analyze, and optimize operations in real-time.</p>
                 </div>
+                <!-- Service Card 2 -->
                 <div class="card">
                     <h3>IoT Automation</h3>
                     <p>Smart living and working environments. From intelligent home control to complex building management systems, we bring automation to life.</p>
                 </div>
+                <!-- Service Card 3 -->
                 <div class="card">
                     <h3>Electrical Services</h3>
                     <p>Reliable power infrastructure. We provide high-quality electrical installation, maintenance, and consulting for residential and industrial projects.</p>
@@ -221,6 +59,7 @@
         </div>
     </section>
 
+    <!-- Sectors section displaying tags -->
     <section class="sectors">
         <div class="container">
             <h2 class="section-title">Sectors We Serve</h2>
@@ -232,11 +71,14 @@
         </div>
     </section>
 
+    <!-- Footer section -->
     <footer>
         <div class="container">
             <p>&copy; 2024 GuIIOTTI. All rights reserved.</p>
         </div>
     </footer>
 
+    <!-- Link to external JavaScript file -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
