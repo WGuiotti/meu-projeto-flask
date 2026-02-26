@@ -4,7 +4,7 @@
 
 Website institucional e portfólio para a **GuIIOTTI - Soluções em IIoT & Automação**, desenvolvido com Flask. O site apresenta os serviços da empresa, informações de contato e funcionalidades dinâmicas.
 
-**[➡️ Acesse a versão ao vivo aqui](https://seu-link-do-render.onrender.com)** *(substitua pelo seu link de deploy)*
+**[➡️ Acesse a versão ao vivo aqui](https://guiiotti.onrender.com/)**
 
 ---
 
@@ -37,7 +37,7 @@ Siga os passos abaixo para configurar e rodar o projeto em seu ambiente de desen
 
 1.  **Clone o repositório:**
     ```bash
-    git clone https://github.com/seu-usuario/seu-repositorio.git
+    git clone https://github.com/WGuiotti/meu-projeto-flask
     cd seu-repositorio
     ```
 
