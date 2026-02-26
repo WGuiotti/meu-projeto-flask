@@ -1,5 +1,6 @@
 # Import necessary modules from Flask
 from flask import Flask, render_template, request, redirect, url_for
+import requests
 import os
 
 # Initialize the Flask application
@@ -18,6 +19,7 @@ translations = {
         'garage_h2': 'Garagem Inteligente',
         'garage_p': 'Nunca mais esqueça seu portão aberto além de ganhar tempo no seu dia a dia!',
         'garage_alt': 'Controle de portão de garagem inteligente via aplicativo',
+        'garage_gif_alt': 'Animação do portão da garagem abrindo e fechando automaticamente',
         'garage_link': 'Conheça a Garagem Inteligente',
         'garage_seo': 'Especialistas em TX Car: A maneira mais prática de abrir o portão com farol alto. Segurança total ao chegar.',
         'btn_services': 'Nossos Serviços',
@@ -37,7 +39,7 @@ translations = {
         'about_p': 'Dedicamo-nos a preencher a lacuna entre a engenharia elétrica tradicional e as modernas soluções de IoT.',
         'contact_title': 'Fale Conosco',
         'contact_whatsapp': 'Conversar no WhatsApp',
-        'contact_email': 'wellington.guiotti@gmail.com',
+        'contact_email': 'wellingtongmail@gmail.com',
         'contact_phone_display': '+55 19 99400-7855',
         'whatsapp_msg': 'Olá! Estou entrando em contato através do website GuIIOTTI.',
         'iiot_detail': 'Nossas soluções de IIoT conectam máquinas, sensores e sistemas para fornecer visibilidade total da sua produção. Utilizamos protocolos avançados como MQTT e OPC-UA para garantir integridade de dados e dashboards em tempo real.',
@@ -52,6 +54,7 @@ translations = {
         'garage_h2': 'Smart Garage',
         'garage_p': 'Never forget your gate open again and save time in your daily life!',
         'garage_alt': 'Smart garage gate control via app',
+        'garage_gif_alt': 'Animation of the garage door opening and closing automatically',
         'garage_link': 'See Smart Garage',
         'garage_seo': 'TX Car Specialists: The most practical way to open the gate with high beams. Total safety upon arrival.',
         'btn_services': 'Our Services',
@@ -71,7 +74,7 @@ translations = {
         'about_p': 'We are dedicated to bridging the gap between traditional electrical engineering and modern IoT solutions.',
         'contact_title': 'Contact Us',
         'contact_whatsapp': 'Chat on WhatsApp',
-        'contact_email': 'wellington.guiotti@gmail.com',
+        'contact_email': 'wellingtongmail@gmail.com',
         'contact_phone_display': '+55 19 99400-7855',
         'whatsapp_msg': 'Hello! I am contacting you through the GuIIOTTI website.',
         'iiot_detail': 'Our IIoT solutions connect machines, sensors, and systems to provide full visibility of your production. We use advanced protocols like MQTT and OPC-UA to ensure data integrity and real-time dashboards.',
@@ -86,6 +89,7 @@ translations = {
         'garage_h2': 'Garaje Inteligente',
         'garage_p': '¡Nunca más olvides tu portón abierto y ahorra tiempo en tu día a día!',
         'garage_alt': 'Control de portón de garaje inteligente vía app',
+        'garage_gif_alt': 'Animación de la puerta del garaje abriéndose y cerrándose automáticamente',
         'garage_link': 'Ver Garaje Inteligente',
         'garage_seo': 'Especialistas en TX Car: La forma más práctica de abrir el portón con luz alta. Seguridad total al llegar.',
         'btn_services': 'Nuestros Servicios',
@@ -105,7 +109,7 @@ translations = {
         'about_p': 'Nos dedicamos a cerrar la brecha entre la ingeniería eléctrica tradicional y las soluciones modernas de IoT.',
         'contact_title': 'Contáctenos',
         'contact_whatsapp': 'Hable por WhatsApp',
-        'contact_email': 'wellington.guiotti@gmail.com',
+        'contact_email': 'wellingtongmail@gmail.com',
         'contact_phone_display': '+55 19 99400-7855',
         'whatsapp_msg': '¡Hola! Me pongo en contacto a través del sitio web de GuIIOTTI.',
         'iiot_detail': 'Nuestras soluciones IIoT conectan máquinas, sensores y sistemas para brindar visibilidad total de su producción. Utilizamos protocolos avanzados como MQTT y OPC-UA para garantizar la integridad de los datos y paneles en tiempo real.',
@@ -114,6 +118,37 @@ translations = {
     }
 }
 
+# Helper function to fetch external data (Weather & Currency)
+def get_dashboard_data():
+    weather_info = ""
+    currency_info = ""
+    
+    # 1. Fetch Weather for Indaiatuba-SP
+    try:
+        # Timeout set to 1s to prevent page load delay if API is slow
+        r = requests.get('https://api.open-meteo.com/v1/forecast?latitude=-23.0903&longitude=-47.2181&daily=temperature_2m_max,temperature_2m_min&current_weather=true&timezone=America%2FSao_Paulo', timeout=1)
+        if r.status_code == 200:
+            data = r.json()
+            curr = round(data['current_weather']['temperature'])
+            max_t = round(data['daily']['temperature_2m_max'][0])
+            min_t = round(data['daily']['temperature_2m_min'][0])
+            weather_info = f"🌤️ Indaiatuba: {curr}°C (Máx: {max_t}° Mín: {min_t}°)"
+    except:
+        pass # Fail silently to not break the page
+
+    # 2. Fetch Currency (USD & EUR)
+    try:
+        r = requests.get('https://economia.awesomeapi.com.br/last/USD-BRL,EUR-BRL', timeout=1)
+        if r.status_code == 200:
+            data = r.json()
+            usd = f"{float(data['USDBRL']['bid']):.2f}"
+            eur = f"{float(data['EURBRL']['bid']):.2f}"
+            currency_info = f"💰 Dólar: R$ {usd} | Euro: R$ {eur}"
+    except:
+        pass
+
+    return weather_info, currency_info
+
 # Define the route for the root URL ('/')
 @app.route('/')
 def index():
@@ -121,8 +156,12 @@ def index():
     lang = request.args.get('lang', 'pt')
     if lang not in translations:
         lang = 'pt'
+    
+    # Fetch data server-side
+    weather, currency = get_dashboard_data()
+    
     # Render the index.html template
-    return render_template('index.html', text=translations[lang], lang=lang)
+    return render_template('index.html', text=translations[lang], lang=lang, weather=weather, currency=currency)
 
 # Example route for a sub-page in the 'pages' folder
 @app.route('/about')

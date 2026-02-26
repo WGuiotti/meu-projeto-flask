@@ -35,6 +35,11 @@
 
     <!-- Hero section with main headline and call to action -->
     <section class="hero">
+        <!-- Info Ticker (Server-side Data) -->
+        <div id="info-ticker" class="info-ticker" data-weather="{{ weather }}" data-currency="{{ currency }}">
+            {{ weather if weather else (currency if currency else '') }}
+        </div>
+
         <div class="container">
             <h1>{{ text.hero_h1 }}</h1>
             <p>{{ text.hero_p }}</p>
@@ -52,6 +57,7 @@
             </div>
             <div class="garage-image">
                 <img src="{{ url_for('static', filename='img/garagem.jpg') }}" alt="{{ text.garage_alt }}" loading="lazy">
+                <img src="{{ url_for('static', filename='img/closing-and-opening-the-garage.gif') }}" alt="{{ text.garage_gif_alt }}" loading="lazy">
             </div>
         </div>
     </section>
@@ -108,7 +114,7 @@
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-1.57 1.97c-2.83-1.44-5.15-3.75-6.59-6.59l1.97-1.57c.26-.26.35-.65.24-1.01A11.36 11.36 0 0 1 8.59 4.22c0-.55-.45-1-1-1H4.22c-.55 0-1 .45-1 1C3.22 14.15 11.35 22.28 21.38 22.28c.55 0 1-.45 1-1v-3.38c0-.55-.45-1-1-1zM5.21 5.22h2.25c.15 1.64.45 3.21.89 4.7l-1.6 1.28c-.68-2.02-1.26-4.08-1.54-5.98zm13.87 13.87c-1.9 0-3.96-.58-5.98-1.26l1.28-1.6c1.49.44 3.06.74 4.7.89v1.97z"/></svg>
                     {{ text.contact_phone_display }}
                 </a>
-                <a href="mailto:wellington.guiotti@gmail.com" class="btn-contact email">
+                <a href="mailto:{{ text.contact_email }}" class="btn-contact email">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
                     {{ text.contact_email }}
                 </a>
@@ -125,5 +131,27 @@
 
     <!-- Link to external JavaScript file -->
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+    <!-- Simple Ticker Rotator -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ticker = document.getElementById('info-ticker');
+            const weather = ticker.getAttribute('data-weather');
+            const currency = ticker.getAttribute('data-currency');
+            
+            // Only run if we have both data points to alternate
+            if (weather && currency) {
+                let showWeather = true;
+                setInterval(() => {
+                    showWeather = !showWeather;
+                    ticker.style.opacity = '0'; // Fade out
+                    setTimeout(() => {
+                        ticker.innerText = showWeather ? weather : currency;
+                        ticker.style.opacity = '1'; // Fade in
+                    }, 500);
+                }, 5000); // Switch every 5 seconds
+            }
+        });
+    </script>
 </body>
 </html>

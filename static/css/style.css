@@ -80,7 +80,14 @@ nav {
     flex-direction: column;
     justify-content: center;
     padding: 0 20px;
-    background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+    /* Layering gradient over the background image for text readability */
+    background: 
+        linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.9)),
+        url('../img/indaiatuba-banner.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative; /* Needed for absolute positioning of ticker */
 }
 
 .hero h1 {
@@ -94,9 +101,10 @@ nav {
 
 .hero p {
     font-size: 1.1rem;
-    color: var(--accent);
+    color: #f1f5f9;
     max-width: 700px;
     margin: 0 auto 40px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .btn {
@@ -110,6 +118,22 @@ nav {
     transition: all 0.3s ease;
     text-transform: uppercase;
     letter-spacing: 1px;
+}
+
+/* Info Ticker Styles */
+.info-ticker {
+    position: absolute;
+    top: 20px; /* Spacing from the top of the hero section */
+    left: 0;
+    width: 100%;
+    text-align: center;
+    background-color: transparent;
+    color: var(--iiot-color);
+    padding: 12px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    transition: opacity 0.5s ease-in-out;
 }
 
 .btn:hover {
@@ -172,6 +196,10 @@ nav {
 
 .garage-image {
     flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: center;
 }
 
 .garage-image img {
@@ -334,5 +362,8 @@ footer { text-align: center; padding: 40px 0; color: #64748b; margin-top: 50px; 
     .garage-text {
         text-align: center;
         margin-bottom: 30px;
+    }
+    .garage-image {
+        grid-template-columns: 1fr;
     }
 }
