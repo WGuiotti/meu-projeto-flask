@@ -1,15 +1,20 @@
-# Import necessary modules from Flask
+# Importa os módulos necessários do Flask e outras bibliotecas.
 from flask import Flask, render_template, request, redirect, url_for
-import requests
-import os
+import requests  # Para fazer requisições HTTP para as APIs externas.
+import os  # Para interagir com o sistema operacional (não utilizado ativamente, mas bom para futuras configurações).
+import logging  # Para registrar mensagens de erro ou informação, útil para depuração no servidor.
 
-# Initialize the Flask application
+# Inicializa a aplicação Flask. '__name__' ajuda o Flask a encontrar recursos como templates e arquivos estáticos.
 app = Flask(__name__)
 
-# Professional Configuration: Define path to database
+# Configuração profissional: Define o caminho para um banco de dados (atualmente não utilizado).
 app.config['DATABASE'] = os.path.join(app.root_path, 'database', 'site.db')
 
-# Translations Dictionary
+# Configura o logging básico para que erros de API apareçam nos logs do Render.
+logging.basicConfig(level=logging.INFO)
+
+# Dicionário principal que armazena todas as traduções do site.
+# Cada chave de idioma ('pt', 'en', 'es') contém outro dicionário com as chaves de texto e seus valores traduzidos.
 translations = {
     'pt': {
         'title': 'GuIIOTTI - Soluções em IIoT & Automação',
@@ -118,86 +123,97 @@ translations = {
     }
 }
 
-# Helper function to fetch external data (Weather & Currency)
+# Função auxiliar para buscar dados externos (Clima e Cotações).
 def get_dashboard_data():
-    weather_info = ""
-    currency_info = ""
+    weather_info = ""  # Inicializa a variável de clima como string vazia.
+    currency_info = ""  # Inicializa a variável de cotação como string vazia.
     
-    # 1. Fetch Weather for Indaiatuba-SP
+    # 1. Busca os dados do clima para Indaiatuba-SP.
     try:
-        # Timeout set to 1s to prevent page load delay if API is slow
-        r = requests.get('https://api.open-meteo.com/v1/forecast?latitude=-23.0903&longitude=-47.2181&daily=temperature_2m_max,temperature_2m_min&current_weather=true&timezone=America%2FSao_Paulo', timeout=1)
-        if r.status_code == 200:
-            data = r.json()
-            curr = round(data['current_weather']['temperature'])
-            max_t = round(data['daily']['temperature_2m_max'][0])
-            min_t = round(data['daily']['temperature_2m_min'][0])
-            weather_info = f"🌤️ Indaiatuba: {curr}°C (Máx: {max_t}° Mín: {min_t}°)"
-    except:
-        pass # Fail silently to not break the page
+        # Faz uma requisição GET para a API Open-Meteo com um timeout de 2.5 segundos.
+        r = requests.get('https://api.open-meteo.com/v1/forecast?latitude=-23.0903&longitude=-47.2181&daily=temperature_2m_max,temperature_2m_min&current_weather=true&timezone=America%2FSao_Paulo', timeout=2.5)
+        r.raise_for_status()  # Lança uma exceção se a resposta for um código de erro (4xx ou 5xx).
+        data = r.json()  # Converte a resposta JSON em um dicionário Python.
+        # Extrai e formata os dados do clima.
+        curr = round(data['current_weather']['temperature'])
+        max_t = round(data['daily']['temperature_2m_max'][0])
+        min_t = round(data['daily']['temperature_2m_min'][0])
+        weather_info = f"🌤️ Indaiatuba: {curr}°C (Máx: {max_t}° Mín: {min_t}°)"
+    except requests.exceptions.RequestException as e:
+        # Se a requisição falhar (timeout, erro de conexão, etc.), registra o erro.
+        logging.error(f"Weather API request failed: {e}")
+        # A função continua, mas 'weather_info' permanece vazia, não quebrando a página.
 
-    # 2. Fetch Currency (USD & EUR)
+    # 2. Busca as cotações de moedas (Dólar e Euro).
     try:
-        r = requests.get('https://economia.awesomeapi.com.br/last/USD-BRL,EUR-BRL', timeout=1)
-        if r.status_code == 200:
-            data = r.json()
-            usd = f"{float(data['USDBRL']['bid']):.2f}"
-            eur = f"{float(data['EURBRL']['bid']):.2f}"
-            currency_info = f"💰 Dólar: R$ {usd} | Euro: R$ {eur}"
-    except:
-        pass
+        # Faz uma requisição GET para a AwesomeAPI com um timeout de 2.5 segundos.
+        r = requests.get('https://economia.awesomeapi.com.br/last/USD-BRL,EUR-BRL', timeout=2.5)
+        r.raise_for_status()  # Lança uma exceção em caso de erro.
+        data = r.json()  # Converte a resposta JSON.
+        # Extrai e formata os dados da cotação com duas casas decimais.
+        usd = f"{float(data['USDBRL']['bid']):.2f}"
+        eur = f"{float(data['EURBRL']['bid']):.2f}"
+        currency_info = f"💰 Dólar: R$ {usd} | Euro: R$ {eur}"
+    except requests.exceptions.RequestException as e:
+        # Se a requisição falhar, registra o erro.
+        logging.error(f"Currency API request failed: {e}")
 
+    # Retorna as strings formatadas (ou vazias, em caso de falha).
     return weather_info, currency_info
 
-# Define the route for the root URL ('/')
+# Define a rota para a página principal do site.
 @app.route('/')
 def index():
-    # Get language from query parameters, default to 'pt'
+    # Pega o idioma da URL (ex: ?lang=en), usando 'pt' como padrão se não for fornecido.
     lang = request.args.get('lang', 'pt')
+    # Garante que o idioma selecionado exista no dicionário de traduções.
     if lang not in translations:
         lang = 'pt'
     
-    # Fetch data server-side
+    # Chama a função para buscar os dados do clima e cotação.
     weather, currency = get_dashboard_data()
     
-    # Render the index.html template
+    # Renderiza o template 'index.html', passando o dicionário de textos do idioma correto e os dados do dashboard.
     return render_template('index.html', text=translations[lang], lang=lang, weather=weather, currency=currency)
 
-# Example route for a sub-page in the 'pages' folder
+# Rota para a página 'Sobre'.
 @app.route('/about')
 def about():
-    lang = request.args.get('lang', 'pt')
+    lang = request.args.get('lang', 'pt')  # Lógica de idioma igual à da página principal.
     if lang not in translations:
         lang = 'pt'
     return render_template('pages/about.html', text=translations[lang], lang=lang)
 
-# Route for Services Pages
+# Rota dinâmica para as páginas de serviço (ex: /service/iiot).
 @app.route('/service/<service_id>')
 def service(service_id):
-    lang = request.args.get('lang', 'pt')
+    lang = request.args.get('lang', 'pt')  # Lógica de idioma.
     if lang not in translations:
         lang = 'pt'
     
-    # Map service_id to translation keys
+    # Mapeia o 'service_id' da URL para as chaves de texto correspondentes no dicionário de traduções.
     service_map = {
         'iiot': {'title': 'card1_title', 'desc': 'card1_p', 'detail': 'iiot_detail'},
         'automation': {'title': 'card2_title', 'desc': 'card2_p', 'detail': 'auto_detail'},
         'electrical': {'title': 'card3_title', 'desc': 'card3_p', 'detail': 'elec_detail'}
     }
     
+    # Se o service_id não for válido, redireciona para a página inicial como fallback.
     if service_id not in service_map:
         return render_template('index.html', text=translations[lang], lang=lang) # Fallback
         
     data = service_map[service_id]
     return render_template('pages/service.html', text=translations[lang], lang=lang, service_data=data)
 
-# SEO Routes for Garage/TX Car
+# Rotas de SEO para a seção da Garagem Inteligente.
+# Ambas as URLs redirecionam para a página inicial, focando na âncora '#garage'.
 @app.route('/txcar')
 @app.route('/farol-alto')
 def garage_redirect():
     return redirect(url_for('index', _anchor='garage'))
 
-# Run the application if executed as the main script
+# Bloco de execução principal: só roda se o script for executado diretamente (python app.py).
 if __name__ == '__main__':
-    # Run in debug mode for development
+    # Inicia o servidor de desenvolvimento do Flask com o modo de depuração ativado.
+    # debug=True permite recarregamento automático ao salvar e exibe erros detalhados no navegador.
     app.run(debug=True)
