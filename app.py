@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for
 import requests  # Para fazer requisições HTTP para as APIs externas.
 import os  # Para interagir com o sistema operacional (não utilizado ativamente, mas bom para futuras configurações).
 import logging  # Para registrar mensagens de erro ou informação, útil para depuração no servidor.
+import time  # Para gerenciar o cache e evitar muitas requisições.
 
 # Inicializa a aplicação Flask. '__name__' ajuda o Flask a encontrar recursos como templates e arquivos estáticos.
 app = Flask(__name__)
@@ -123,40 +124,64 @@ translations = {
     }
 }
 
+# Configuração de Cache Simples (em memória)
+# Armazena os dados e o momento da última atualização para evitar erro 429 (Too Many Requests).
+dashboard_cache = {
+    'weather': {'data': "", 'timestamp': 0},
+    'currency': {'data': "", 'timestamp': 0}
+}
+CACHE_TIMEOUT = 300  # Tempo de cache em segundos (5 minutos)
+
 # Função auxiliar para buscar dados externos (Clima e Cotações).
 def get_dashboard_data():
-    weather_info = ""  # Inicializa a variável de clima como string vazia.
-    currency_info = ""  # Inicializa a variável de cotação como string vazia.
+    global dashboard_cache
+    current_time = time.time()
+    
+    # Recupera dados do cache inicialmente
+    weather_info = dashboard_cache['weather']['data']
+    currency_info = dashboard_cache['currency']['data']
     
     # 1. Busca os dados do clima para Indaiatuba-SP.
-    try:
-        # Faz uma requisição GET para a API Open-Meteo com um timeout de 2.5 segundos.
-        r = requests.get('https://api.open-meteo.com/v1/forecast?latitude=-23.0903&longitude=-47.2181&daily=temperature_2m_max,temperature_2m_min&current_weather=true&timezone=America%2FSao_Paulo', timeout=2.5)
-        r.raise_for_status()  # Lança uma exceção se a resposta for um código de erro (4xx ou 5xx).
-        data = r.json()  # Converte a resposta JSON em um dicionário Python.
-        # Extrai e formata os dados do clima.
-        curr = round(data['current_weather']['temperature'])
-        max_t = round(data['daily']['temperature_2m_max'][0])
-        min_t = round(data['daily']['temperature_2m_min'][0])
-        weather_info = f"🌤️ Indaiatuba: {curr}°C (Máx: {max_t}° Mín: {min_t}°)"
-    except requests.exceptions.RequestException as e:
-        # Se a requisição falhar (timeout, erro de conexão, etc.), registra o erro.
-        logging.error(f"Weather API request failed: {e}")
-        # A função continua, mas 'weather_info' permanece vazia, não quebrando a página.
+    # Só atualiza se o cache expirou (passou de 5 minutos)
+    if current_time - dashboard_cache['weather']['timestamp'] > CACHE_TIMEOUT:
+        try:
+            # Faz uma requisição GET para a API Open-Meteo com um timeout de 2.5 segundos.
+            r = requests.get('https://api.open-meteo.com/v1/forecast?latitude=-23.0903&longitude=-47.2181&daily=temperature_2m_max,temperature_2m_min&current_weather=true&timezone=America%2FSao_Paulo', timeout=2.5)
+            r.raise_for_status()  # Lança uma exceção se a resposta for um código de erro (4xx ou 5xx).
+            data = r.json()  # Converte a resposta JSON em um dicionário Python.
+            # Extrai e formata os dados do clima.
+            curr = round(data['current_weather']['temperature'])
+            max_t = round(data['daily']['temperature_2m_max'][0])
+            min_t = round(data['daily']['temperature_2m_min'][0])
+            weather_info = f"🌤️ Indaiatuba: {curr}°C (Máx: {max_t}° Mín: {min_t}°)"
+            # Atualiza o cache
+            dashboard_cache['weather'] = {'data': weather_info, 'timestamp': current_time}
+        except requests.exceptions.RequestException as e:
+            # Se a requisição falhar (timeout, erro de conexão, etc.), registra o erro.
+            logging.error(f"Weather API request failed: {e}")
+            # Mantém o valor antigo do cache se existir
 
     # 2. Busca as cotações de moedas (Dólar e Euro).
-    try:
-        # Faz uma requisição GET para a AwesomeAPI com um timeout de 2.5 segundos.
-        r = requests.get('https://economia.awesomeapi.com.br/last/USD-BRL,EUR-BRL', timeout=2.5)
-        r.raise_for_status()  # Lança uma exceção em caso de erro.
-        data = r.json()  # Converte a resposta JSON.
-        # Extrai e formata os dados da cotação com duas casas decimais.
-        usd = f"{float(data['USDBRL']['bid']):.2f}"
-        eur = f"{float(data['EURBRL']['bid']):.2f}"
-        currency_info = f"💰 Dólar: R$ {usd} | Euro: R$ {eur}"
-    except requests.exceptions.RequestException as e:
-        # Se a requisição falhar, registra o erro.
-        logging.error(f"Currency API request failed: {e}")
+    if current_time - dashboard_cache['currency']['timestamp'] > CACHE_TIMEOUT:
+        try:
+            # Nova API: Vatcomply - mais robusta e requer apenas uma chamada.
+            r = requests.get('https://api.vatcomply.com/rates?base=BRL&symbols=USD,EUR', timeout=2.5)
+            r.raise_for_status()  # Lança uma exceção em caso de erro.
+            data = r.json()  # Converte a resposta JSON.
+            
+            # A API retorna quanto 1 BRL vale em USD/EUR. Precisamos do inverso.
+            usd_rate = 1 / data['rates']['USD']
+            eur_rate = 1 / data['rates']['EUR']
+            
+            usd = f"{usd_rate:.2f}"
+            eur = f"{eur_rate:.2f}"
+            
+            currency_info = f"💰 Dólar: R$ {usd} | Euro: R$ {eur}"
+            # Atualiza o cache
+            dashboard_cache['currency'] = {'data': currency_info, 'timestamp': current_time}
+        except (requests.exceptions.RequestException, KeyError, ZeroDivisionError) as e:
+            # Se a requisição falhar, registra o erro.
+            logging.error(f"Currency API (Vatcomply) request failed: {e}")
 
     # Retorna as strings formatadas (ou vazias, em caso de falha).
     return weather_info, currency_info
